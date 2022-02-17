@@ -1,0 +1,748 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <style>
+
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            font-family: arial;
+            background-color: rgb(36, 36, 36);
+            color: white;
+
+        }
+        label {
+            display: inline-block;
+            width: 200px;
+        }
+
+        button, .choix, .resultat {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        button {
+            font-size: 1.5em;
+            padding: 15px 30px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: rgb(26, 26, 26);
+            transition: 0.5s;
+            border:rgb(26, 26, 26);
+        }
+
+        button:hover {
+            cursor: pointer;
+            background: rgb(85, 85, 85);
+            color: white;
+            border-color: transparent;
+
+        }
+
+
+        .hidden {
+            display: none;
+        }
+
+        .choix {
+            left: 150px;
+            top: 150px;
+            font-size: 1.5em;
+        }
+
+        .choix>input {
+            height: 20px; 
+            width: 20px;
+        }
+
+        button {
+            top: 80%;
+        }
+
+        .resultat {
+            font-size: 1.75em;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        @media screen and (max-width: 800px) {
+
+            .choix {
+                font-size: 1em;
+                left: 120px;
+                top: 120px;
+            }
+
+            label {
+                width: 150px;
+            }
+            button {
+                font-size: 1em;
+                width: 80%;
+                margin: 0 auto;
+            }
+            .resultat {
+                font-size: 1.2em;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button>Générer une loadout</button>
+
+    <div class="choix">
+        <label for="acces1">1 Accèssoire </label><input type="radio" name="acces" id="acces1"><br>
+        <label for="acces2">2 Accèssoires </label><input type="radio" name="acces" id="acces2"><br>
+        <label for="acces3">3 Accèssoires </label><input type="radio" name="acces" id="acces3"><br>
+        <label for="atout1">1 Atout </label><input type="radio" name="atout" id="atout1"><br>
+        <label for="atout2">2 Atouts </label><input type="radio" name="atout" id="atout2"><br>
+        <label for="atout3">3 Atouts </label><input type="radio" name="atout" id="atout3"><br>
+        <label for="camo">Camouflage </label><input type="checkbox" id="camo"><br>
+        <label for="killstreak">killstreak </label><input type="checkbox" id="killstreak"><br>
+
+    </div>
+
+
+    <div class="resultat"></div>
+
+
+
+    <script>
+
+        const acces1 = document.getElementById('acces1');   
+        const acces2 = document.getElementById('acces2');
+        const acces3 = document.getElementById('acces3');
+        const atout1 = document.getElementById('atout1');   
+        const atout2 = document.getElementById('atout2');
+        const atout3 = document.getElementById('atout3');
+        const camo = document.getElementById('camo');
+        const killstreak = document.getElementById('killstreak');
+
+        let armeArray = ["Ump45", "Scar-H", "An-94", "M4A1", "Famas", "Tar-21", "Fal", "M16A4", "ACR", "F2000", "AK-47", "MP5K", "Vector", "P90", "L86", "RPD", "MG4", "AUG", "M240", "Intervention", "Barrett .50", "WA 2000", "SPAS-12", "AA-12", "Striker", "usp 45", "Magnum", "Desert Eagle", "Type 25", "M27", "MP7", "LSAT", "DSR-50", "Ballista", "KSG", "MAC-11", "uzi", "kiparis", "skorpion", "M16", "M14", "Enfield", "Galil", "Commando", "Olympia", "Stakeout", "HK-21", "Dragunov", "L96A1", "G36C", "PP90", "MK46", "L11A8", "MSR","Bal-27", "Lynx", "Mors" ];
+        let equipementArray = ["Balles Blindées", "Canon Long", "Chargeur Grande Capacité", "balles chemisées", "viseur reflex", "poignée ergonomique", "chargeur rapide", "lunette acog", "garde-main", "crosse réglable", "détécteur de cible", "viseur laser", "sélecteur de tir", "vsieur eotech", "silencieux", "lance-grenades", "couteau tactique", "akimbo", "zoom ajustable", "tir rapide", "lunette bibande", "processeur balistique", "viseur holographique", "lunette thermique", "capteur cardiaque", "lance-flamme",  ];
+        let atoutArray = ["Sang-Froid", "Ninja", "poids-plume", "gilet pare-balles", "danger proche", "invisible", "fonceur", "main leste", "Robustesse", "pillard", "détermination", "tour de passe-passe", "conditions extrêmes", "bonne gâchette", "assassin", "surarmement", "tireur d'élite", "traqueur", "visée solide", "fantôme", "seigneur de guerre", "marathon", "masque tacitique", "dopage", "martyre", "baroud d'honneur"];
+        let camoArray = ["Tigre Bleu", "Diamants", "Doré", "sibérie", "choco", "gouttes de sang", "fibre de carbonne", "fleur de cerisier", "ronin", "crânes", "olive"];
+        let killstreakArray = ["vulcan", "AC-130", "Warbird"];
+
+
+        
+        function randomNumber(arrayName) {
+            let random = Math.floor(arrayName.length * Math.random());
+            return random;
+        }
+
+
+
+        document.querySelector('button').addEventListener('click', () => {
+
+            if (acces1.checked) {
+                if(atout1.checked) {
+                    if(camo.checked && killstreak.checked) {
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + camoArray[random_camo] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+
+                    }
+
+                    if(camo.checked && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + camoArray[random_camo];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked ) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+                }
+
+
+
+
+
+
+                if(atout2.checked) {
+                    if(camo.checked && killstreak.checked) {
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + camoArray[random_camo] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+
+                    }
+
+                    if(camo.checked && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + camoArray[random_camo];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked ) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+                }
+
+
+
+
+
+
+                if(atout3.checked) {
+                    if(camo.checked && killstreak.checked) {
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3] + ' ' + camoArray[random_camo] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+
+                    }
+
+                    if(camo.checked && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3] + ' ' + camoArray[random_camo];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked ) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+            if (acces2.checked) {
+                if(atout1.checked) {
+                    if(camo.checked && killstreak.checked) {
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + camoArray[random_camo] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+
+                    }
+
+                    if(camo.checked && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + camoArray[random_camo];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked ) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+                }
+
+
+
+
+
+
+                if(atout2.checked) {
+                    if(camo.checked && killstreak.checked) {
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + camoArray[random_camo] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+
+                    }
+
+                    if(camo.checked && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + camoArray[random_camo];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked ) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+                }
+
+
+
+
+
+
+                if(atout3.checked) {
+                    if(camo.checked && killstreak.checked) {
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3] + ' ' + camoArray[random_camo] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+
+                    }
+
+                    if(camo.checked && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3] + ' ' + camoArray[random_camo];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked ) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+                }
+            
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+            if (acces3.checked) {
+                if(atout1.checked) {
+                    if(camo.checked && killstreak.checked) {
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + equipementArray[random_equipement2] + ' ' + atoutArray[random_atout] + ' ' + camoArray[random_camo] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+
+                    }
+
+                    if(camo.checked && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + atoutArray[random_atout] + ' ' + camoArray[random_camo];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked ) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + atoutArray[random_atout] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + atoutArray[random_atout];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+                }
+
+
+
+
+
+
+                if(atout2.checked) {
+                    if(camo.checked && killstreak.checked) {
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + camoArray[random_camo] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+
+                    }
+
+                    if(camo.checked && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + camoArray[random_camo];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked ) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+                }
+
+
+
+
+
+
+                if(atout3.checked) {
+                    if(camo.checked && killstreak.checked) {
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3] + ' ' + camoArray[random_camo] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+
+                    }
+
+                    if(camo.checked && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+                        let random_camo = randomNumber(camoArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3] + ' ' + camoArray[random_camo];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked ) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+                        let random_killstreak = randomNumber(killstreakArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3]  + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3] + ' ' + killstreakArray[random_killstreak];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+
+                    if(camo.checked == false && killstreak.checked == false) {   
+
+                        let random_arme = randomNumber(armeArray);
+                        let random_equipement = randomNumber(equipementArray);
+                        let random_equipement2 = randomNumber(equipementArray);
+                        let random_equipement3 = randomNumber(equipementArray);
+                        let random_atout = randomNumber(atoutArray);
+                        let random_atout2 = randomNumber(atoutArray);
+                        let random_atout3 = randomNumber(atoutArray);
+
+
+                        let phrase_final = armeArray[random_arme] + ' ' + equipementArray[random_equipement] + ' ' + equipementArray[random_equipement2] + ' ' + equipementArray[random_equipement3] + ' ' + atoutArray[random_atout] + ' ' + atoutArray[random_atout2] + ' ' + atoutArray[random_atout3];
+                        document.querySelector('.resultat').innerText = phrase_final;
+                    }
+                }
+            }
+        });
+
+
+        
+
+
+
+    </script>
+
+</body>
+</html>
